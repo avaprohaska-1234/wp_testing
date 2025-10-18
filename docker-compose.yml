@@ -6,7 +6,7 @@ services:
       volumes:
          - ./data:/data
       ports:
-        - 8025:8025
+        # - 8025:8025
         - 1025:1025
       environment:
         MP_MAX_MESSAGES: 5000
