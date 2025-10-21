@@ -1,26 +1,33 @@
 services:
-    mailpit:
-      image: axllent/mailpit
-      container_name: mailpit
-      restart: unless-stopped
-      volumes:
-         - ./data:/data
-      ports:
-        # - 8025:8025
-        - 1025:1025
-      environment:
-        MP_MAX_MESSAGES: 5000
-        MP_DATABASE: /data/mailpit.db
-        MP_SMTP_AUTH_ACCEPT_ANY: 1
-        MP_SMTP_AUTH_ALLOW_INSECURE: 1
-    traefik:
-      image: traefik:v3.5
-      command:
-        - "--api.insecure=true"
-        - "--providers.docker=true"
-        - "--entrypoints.web.address=:80"
-      ports:
-        - "80:80"
-        - "8080:8080"
-      volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
+  traefik:
+    image: "traefik:v3.4"
+    container_name: "traefik"
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=proxy"
+      - "--entryPoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  whoami:
+    image: "traefik/whoami"
+    restart: unless-stopped
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
+
+networks:
+  proxy:
+    name: proxy
