@@ -8,6 +8,8 @@ services:
     networks:
       - proxy
     command:
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.docker.network=proxy"
@@ -27,6 +29,20 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
       - "traefik.http.routers.whoami.entrypoints=web"
+
+  whoami-api:
+    image: "traefik/whoami"
+    networks:
+      - proxy
+    container_name: "whoami-api"
+    environment:
+      - WHOAMI_NAME=API Service
+    labels:
+      - "traefik.enable=true"
+      # Path-based routing
+      - "traefik.http.routers.whoami-api.rule=Host(`whoami.docker.localhost`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.whoami-api.entrypoints=web"
+
 
 networks:
   proxy:
