@@ -59,11 +59,12 @@ services:
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
     networks:
       - proxy
+    command:
+      - --webroot=mailpit 
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.mailpit.entrypoints=web"
-      - "traefik.http.routers.mailpit.rule=Host(`mailpit.localhost`)" 
-         #  && PathPrefix(`/mailpit`)"
+      - "traefik.http.routers.mailpit.rule=Host(`localhost`) && PathPrefix(`/mailpit`)"
       - "traefik.http.routers.mailpit.tls=true"
         # - "traefik.http.routers.mailpit.service=mailpit"
       - "traefik.http.services.mailpit.loadbalancer.server.port=8025"
