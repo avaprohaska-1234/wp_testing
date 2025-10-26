@@ -27,7 +27,7 @@ services:
       - proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
+      - "traefik.http.routers.whoami.rule=Host(`avap.local`) && PathPrefix(`/whoami`)"
       - "traefik.http.routers.whoami.entrypoints=web"
 
   whoami-api:
